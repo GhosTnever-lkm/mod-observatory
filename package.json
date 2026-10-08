@@ -1,9 +1,11 @@
 {
   "name": "mod-observatory",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Local-first mod collection audit, dependency graph, and snapshot comparison",
   "scripts": {
+    "check:version": "node scripts/check-version.mjs",
+    "release:bundle": "node scripts/build-release.mjs",
     "test": "node --test"
   },
   "engines": {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 — 2026-10-08
+
+- Translate the project README and remaining public interface labels into Russian.
+- Expand the setup guide with import, comparison, privacy, ZIP, format, and contribution details.
+- Advance the displayed and package version to 0.2.0.
+
 ## 0.1.0 — 2026-10-08
 
 - Add a responsive local-first collection dashboard with library, health summary, path overlaps, and relationship graph.

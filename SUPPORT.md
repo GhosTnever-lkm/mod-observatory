@@ -1,12 +1,14 @@
 # Format support and limitations
 
-## 0.1.x
+## 0.2.x
 
 | Input | Read in this release | Not inferred |
 | --- | --- | --- |
 | Selected folder | Relative paths, byte sizes, SHA-256 when available, Paradox `descriptor.mod` name and dependency names | Game-specific override behavior; dependencies from unknown manifest formats |
 | ZIP archive | Stored and deflate entries, central-directory paths, sizes, CRC validation, supported descriptor text | ZIP64, encryption, unsupported compression methods, malformed entries; archives are not extracted to disk |
 | Snapshot JSON | Mod IDs, names, games, enabled state, order, dependencies, file metadata, and reported hashes | Missing hashes cannot be recreated; imported JSON is treated as user-provided data |
+
+Интерфейс приложения и основная документация переведены на русский язык. Функциональные ограничения форматов и обработки файлов в этой версии не изменились.
 
 ## Safety and interpretation
 

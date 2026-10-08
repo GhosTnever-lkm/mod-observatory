@@ -1,55 +1,68 @@
 # Mod Observatory
 
-**A local-first control room for game mod collections.** Index files from folders and ZIP archives, inspect declared dependencies and ordering hints, map path overlaps, and compare saved collection snapshots.
+**Локальный анализатор коллекций игровых модов.** Собирает карту модпака из папок и ZIP-архивов, показывает объявленные зависимости, порядок загрузки и совпадающие пути, а затем сравнивает два снимка.
 
-[Open the app](https://ghostnever-lkm.github.io/mod-observatory/) · [Download the latest release](https://github.com/GhosTnever-lkm/mod-observatory/releases/latest) · [Report a problem](https://github.com/GhosTnever-lkm/mod-observatory/issues)
+[Открыть приложение](https://ghostnever-lkm.github.io/mod-observatory/) · [Скачать последнюю версию](https://github.com/GhosTnever-lkm/mod-observatory/releases/latest) · [Сообщить об ошибке](https://github.com/GhosTnever-lkm/mod-observatory/issues)
 
-## What it does
+## Возможности
 
-- Imports selected mod folders, ZIP archives, or a previously exported collection snapshot.
-- Builds a case-insensitive file-path index and relationship graph from supported metadata.
-- Reports missing or disabled dependencies, dependency and load-after cycles, declared conflicts, shared paths, exact reported hash matches, and unsafe relative paths.
-- Compares snapshots and lists additions, removals, metadata changes, file changes, dependency changes, and order changes.
-- Filters by game, mod, or path; exports JSON without embedding file contents.
+- Импорт выбранных папок, ZIP-архивов или ранее экспортированного JSON-снимка.
+- Индекс путей без учёта регистра и граф связей по распознанным метаданным.
+- Поиск отсутствующих и выключенных зависимостей, циклов зависимостей и порядка загрузки, объявленных конфликтов, общих путей, совпадений SHA-256 и небезопасных относительных путей.
+- Сравнение двух снимков: добавленные, удалённые и изменённые моды, файлы, зависимости и порядок.
+- Фильтры по игре, моду и пути; экспорт JSON без содержимого файлов.
 
-The app does not install, enable, reorder, patch, or modify mods. A repeated path is a review signal, not proof of incompatibility. Version constraints are counted but not interpreted as a universal version language. Unknown manifests are not guessed into dependencies.
+Приложение не устанавливает, не включает, не переставляет, не исправляет и не изменяет моды. Общий путь — повод проверить совместимость вручную, а не доказательство конфликта. Синтаксис версий и зависимостей у разных игр отличается: неизвестные форматы не угадываются.
 
-## Quick start
+## Быстрый старт
 
-1. Open the [hosted app](https://ghostnever-lkm.github.io/mod-observatory/).
-2. Select one or more mod folders or ZIP archives. Files are read locally by the current browser tab.
-3. Review the collection summary, findings, and relationship graph.
-4. Export a report, or import an older JSON snapshot and compare it with a new collection.
+1. Откройте [веб-приложение](https://ghostnever-lkm.github.io/mod-observatory/).
+2. Выберите папку мода или ZIP. Можно добавить несколько файлов для анализа коллекции.
+3. Просмотрите сводку, находки, граф связей и общие пути.
+4. Нажмите **«Экспорт отчёта»**, чтобы скачать JSON-снимок. Для сравнения выберите **«Импорт JSON»** и загрузите прежний снимок.
 
-To run a local copy, serve this folder over HTTP, for example with `python -m http.server 8000`, then open `http://localhost:8000`. Opening ES modules directly through `file://` is blocked by many browsers.
+Файлы читаются локально в текущей вкладке. Для запуска копии с диска используйте локальный HTTP-сервер (например, `python -m http.server 8000`) и откройте `http://localhost:8000`. Прямое открытие `index.html` через `file://` может блокировать ES-модули.
 
-## Metadata support
+## Поддержка форматов
 
-The first adapter reads Paradox `descriptor.mod` names and dependency names. Dependencies are connected to imported mods only when a name matches one unique imported mod. Other supported entries are indexed as files; game-specific override behavior is not inferred. See [SUPPORT.md](SUPPORT.md) for limits.
+Первая версия читает из Paradox `descriptor.mod` имя и имена зависимостей. Зависимость связывается с импортированным модом только при единственном совпадении имени. Остальные файлы индексируются, но поведение переопределений, специфичное для конкретной игры, не моделируется.
 
-## Privacy and safety
+| Источник | Обрабатывается | Ограничения |
+| --- | --- | --- |
+| Папка | Относительные пути, размер, SHA-256 при поддержке браузером, `descriptor.mod` | Группировка по верхней папке выбора; неизвестные манифесты не разбираются |
+| ZIP | Записи без сжатия и DEFLATE, проверка размера и CRC, текст поддерживаемого дескриптора | ZIP64, шифрование и другие методы сжатия не поддерживаются; содержимое не извлекается на диск |
+| JSON-снимок | ID и метаданные модов, порядок, зависимости, файлы и сохранённые хеши | Отсутствующие в снимке хеши нельзя восстановить; импортированный JSON считается пользовательским вводом |
 
-- No backend, analytics, external script, or upload endpoint.
-- Selected files are processed in the browser tab; exports contain metadata only.
-- The app does not execute scripts, DLLs, plugins, or mod code.
-- ZIP entries are not extracted to disk. Supported entries are checked against declared size and CRC.
-- Imports are limited to 50,000 files and 512 MiB. Snapshot JSON is limited to 25 MiB and 50,000 mods.
-- No collection is saved automatically. Use explicit JSON export/import to move a snapshot.
+Подробные ограничения и смысл находок описаны в [SUPPORT.md](SUPPORT.md).
 
-## Development
+## Приватность и безопасность
 
-Requires Node.js 20 or newer for the regression suite. The app has no build step or runtime dependency.
+- Нет сервера загрузки, аналитики, сторонних скриптов и сетевых запросов приложения.
+- Выбранные файлы обрабатываются в активной вкладке; экспорт содержит метаданные и отчёт, но не содержимое файлов.
+- Скрипты, DLL, плагины и код модов не исполняются.
+- ZIP-записи не распаковываются на диск. Проверки размера и CRC помогают обнаружить повреждение, но не подтверждают безопасность архива.
+- Лимит импорта — 50 000 файлов и 512 МиБ; JSON — до 25 МиБ и 50 000 модов.
+- Коллекция автоматически не сохраняется. Для переноса или хранения используйте явный экспорт/импорт JSON.
+
+## Разработка
+
+Для регрессионного набора нужен Node.js 20 или новее. Сборка и зависимости времени выполнения не требуются.
 
 ```sh
+npm run check:version
 npm test
 ```
 
-## Free and Pro
+После фиксации подготовленных файлов в Git архив для выпуска можно собрать командой `npm run release:bundle`. Архив и SHA-256 появятся в `release/`; файлы этой папки не включаются в репозиторий. Скрипт намеренно упаковывает состояние `HEAD`, чтобы незакоммиченные изменения случайно не попали в дистрибутив.
 
-The core edition is free and open source. Optional support: [Buy Me a Coffee](https://buymeacoffee.com/azizazimov8) · [Boosty](https://boosty.to/azimovian) · [Gumroad](https://azimovian22.gumroad.com/).
+Для изменений интерфейса см. [CONTRIBUTING.md](CONTRIBUTING.md). Статус проекта и запланированные изменения ведутся в [CHANGELOG.md](CHANGELOG.md).
 
-The Pro edition is being scoped around saved workspaces, multi-snapshot history, richer export formats, and expanded game adapters. It will be offered after those features and their delivery are ready.
+## Бесплатная и Pro-версии
 
-## License
+Основное приложение бесплатно и распространяется под MIT. Поддержать автора можно через [Buy Me a Coffee](https://buymeacoffee.com/azizazimov8), [Boosty](https://boosty.to/azimovian) или [Gumroad](https://azimovian22.gumroad.com/).
 
-MIT. See [LICENSE](LICENSE).
+Pro-версия пока находится в разработке концепции. Рассматриваются сохранённые рабочие пространства, история нескольких снимков, дополнительные форматы отчётов и адаптеры других игр. Продажа начнётся после реализации и подготовки доставки этих функций.
+
+## Лицензия
+
+MIT. Подробности — в [LICENSE](LICENSE).
