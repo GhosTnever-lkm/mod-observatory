@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101218">
+  <meta name="description" content="Локальный центр аудита коллекций игровых модов: файлы, зависимости, пересечения и сравнение сборок.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Mod Observatory — карта коллекции модов</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Перейти к рабочей области</a>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Mod Observatory — главная">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span><strong>Mod Observatory</strong><small>COLLECTION INTELLIGENCE</small></span>
+      </a>
+      <nav class="topnav" aria-label="Основная навигация">
+        <a href="#workspace">Обзор</a><a href="#how">Возможности</a><a href="#privacy">Приватность</a>
+      </nav>
+      <div class="top-actions"><span class="local-badge"><i></i>Локальная обработка</span><button id="theme-toggle" class="icon-control theme-control" type="button" aria-label="Переключить тему">◐</button></div>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span>МОДЫ · КОЛЛЕКЦИИ · СОВМЕСТИМОСТЬ</div>
+          <h1>Вся коллекция.<br><em>Одна карта.</em></h1>
+          <p class="hero-lead">Разберись, как устроен модпак: какие файлы пересекаются, кому нужны зависимости и что поменялось между сборками.</p>
+          <div class="hero-actions"><button class="button button-primary" id="start-import" type="button"><span>＋</span> Добавить моды</button><button class="button button-quiet" id="load-demo" type="button">Посмотреть пример <span>↗</span></button></div>
+          <div class="trust-row"><span><b>01</b> Без загрузки файлов</span><span><b>02</b> Без запуска модов</span><span><b>03</b> Отчёт остаётся у тебя</span></div>
+        </div>
+        <div class="hero-visual" aria-label="Пример графа зависимостей">
+          <div class="visual-glow"></div><div class="visual-grid"></div>
+          <div class="orbit-ring ring-one"></div><div class="orbit-ring ring-two"></div>
+          <div class="graph-lines"><i></i><i></i><i></i><i></i><i></i></div>
+          <div class="node node-a"><span>CORE</span><strong>Stellaris Base</strong><small>ROOT MOD</small></div>
+          <div class="node node-b"><span class="node-dot teal"></span><strong>Expanded Civics</strong><small>1 DEPENDENCY</small></div>
+          <div class="node node-c"><span class="node-dot violet"></span><strong>UI Overhaul</strong><small>4 PATHS SHARED</small></div>
+          <div class="node node-d"><span class="node-dot amber"></span><strong>Patch 3.8</strong><small>LOAD ORDER</small></div>
+          <div class="visual-foot"><span><i></i> GRAPH PREVIEW</span><span>LOCAL SESSION · v0.1.0</span></div>
+        </div>
+      </section>
+
+      <section id="workspace" class="workspace">
+        <div class="section-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span>WORKSPACE</div><h2>Панель коллекции</h2></div><div class="heading-actions"><button id="compare-button" class="button button-outline" type="button" disabled>⇄ Сравнить снимок</button><button id="export-button" class="button button-outline" type="button" disabled>↓ Экспорт отчёта</button></div></div>
+        <div class="import-strip">
+          <div class="import-icon">↥</div><div class="import-copy"><strong>Начни с папки или ZIP-архива</strong><span>Можно выбрать сразу всю коллекцию. Архивы читаются без распаковки на диск.</span></div>
+          <div class="import-actions"><label class="button button-primary" for="folder-input" tabindex="0" role="button">Выбрать папки<input id="folder-input" type="file" webkitdirectory multiple hidden></label><label class="button button-secondary" for="zip-input" tabindex="0" role="button">Добавить ZIP<input id="zip-input" type="file" accept=".zip,application/zip" multiple hidden></label><label class="button button-secondary" for="snapshot-input" tabindex="0" role="button">Импорт JSON<input id="snapshot-input" type="file" accept=".json,application/json" hidden></label></div>
+        </div>
+        <div id="status" class="status-message" role="status" aria-live="polite" hidden></div>
+        <div class="overview-grid">
+          <section class="panel collection-panel" aria-labelledby="collection-title">
+            <div class="panel-header"><div><div class="panel-kicker">LIBRARY</div><h3 id="collection-title">Моды <span id="mod-count" class="count-pill">0</span></h3></div><button id="clear-button" class="text-control" type="button" disabled>Очистить</button></div>
+            <div class="filter-row"><label class="search-box"><span>⌕</span><input id="search-input" type="search" placeholder="Найти мод или файл…" autocomplete="off"></label><select id="game-filter" aria-label="Фильтр по игре"><option value="">Все игры</option></select></div>
+            <div id="collection-list" class="collection-list"><div class="empty-panel"><div class="empty-orbit">⌁</div><strong>Здесь появится твоя коллекция</strong><span>Импортируй папки или ZIP-файлы, чтобы построить карту.</span><button class="text-link" id="empty-import" type="button">Добавить первый мод <b>→</b></button></div></div>
+            <div class="panel-footer"><span id="collection-meta">Сеанс не сохранён автоматически</span><span class="footer-live"><i></i> READY</span></div>
+          </section>
+
+          <section class="panel insight-panel" aria-labelledby="insights-title">
+            <div class="panel-header"><div><div class="panel-kicker">COLLECTION HEALTH</div><h3 id="insights-title">Сводка</h3></div><span id="health-label" class="health-pill neutral"><i></i> Ожидает данных</span></div>
+            <div id="summary-cards" class="summary-cards">
+              <div class="metric-card"><span>МОДЫ</span><strong id="metric-mods">—</strong><small>в коллекции</small></div><div class="metric-card"><span>ФАЙЛЫ</span><strong id="metric-files">—</strong><small>проиндексировано</small></div><div class="metric-card"><span>НАХОДКИ</span><strong id="metric-findings">—</strong><small>для проверки</small></div>
+            </div>
+            <div class="insight-body"><div class="subhead"><strong>Что проверить</strong><span id="finding-count-label">0 находок</span></div><div id="finding-list" class="finding-list"><div class="empty-findings"><span>✳</span><p>После импорта покажу карту зависимостей, пересечения путей и проблемы структуры.</p></div></div></div>
+            <div class="panel-footer"><span>Совпадение пути ≠ доказанный конфликт</span><button id="view-report" class="text-control" type="button" disabled>Полный отчёт <b>→</b></button></div>
+          </section>
+        </div>
+
+        <div class="analysis-grid">
+          <section class="panel graph-panel" aria-labelledby="graph-title"><div class="panel-header"><div><div class="panel-kicker">RELATIONSHIP MAP</div><h3 id="graph-title">Зависимости и порядок</h3></div><div class="legend"><span><i class="legend-dot dep"></i>Зависимость</span><span><i class="legend-dot conflict"></i>Объявленный конфликт</span></div></div><div id="graph-view" class="graph-view"><div class="graph-empty"><span class="graph-empty-icon">◎</span><strong>Граф появится после анализа</strong><small>Узлы — моды, связи — только обнаруженные декларации.</small></div></div><div class="panel-footer"><span id="graph-caption">Ожидает коллекцию</span><button class="text-control" id="graph-fit" type="button" disabled>Центрировать ↗</button></div></section>
+          <section class="panel paths-panel" aria-labelledby="paths-title"><div class="panel-header"><div><div class="panel-kicker">PATH INDEX</div><h3 id="paths-title">Совпадающие файлы</h3></div><span id="path-count" class="count-pill">0</span></div><div class="filter-row"><label class="search-box"><span>⌕</span><input id="path-search" type="search" placeholder="Фильтр по пути…" autocomplete="off"></label></div><div id="path-list" class="path-list"><div class="empty-findings"><span>⌕</span><p>Пока нет данных для сравнения.</p></div></div><div class="panel-footer"><span>Пути сравниваются без учёта регистра</span></div></section>
+        </div>
+
+        <section id="compare-panel" class="panel compare-panel" aria-labelledby="compare-title" hidden><div class="panel-header"><div><div class="panel-kicker">SNAPSHOT DIFF</div><h3 id="compare-title">Изменения коллекции</h3></div><button id="close-compare" class="text-control" type="button">Закрыть</button></div><div id="compare-results"></div></section>
+      </section>
+
+      <section id="how" class="feature-section"><div class="section-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span>WHAT YOU GET</div><h2>Сначала факты.<br><em>Потом решение.</em></h2></div><p class="section-intro">Observatory показывает структуру набора и помогает заметить изменения. Последнее слово остаётся за тобой и игровыми правилами.</p></div><div class="feature-grid"><article class="feature-card"><div class="feature-number">01 / INDEX</div><div class="feature-icon cyan">⌘</div><h3>Единая карта файлов</h3><p>Сгруппируй пути по модам и быстро найди, какие пакеты поставляют один и тот же файл.</p></article><article class="feature-card"><div class="feature-number">02 / GRAPH</div><div class="feature-icon violet">⌬</div><h3>Связи без догадок</h3><p>Показывай явно объявленные зависимости, конфликты и циклы. Неизвестные форматы остаются неизвестными.</p></article><article class="feature-card"><div class="feature-number">03 / DIFF</div><div class="feature-icon amber">⇄</div><h3>Сравнение сборок</h3><p>Экспортируй снимок, сравни его с новым и увидь добавления, удаления и изменения файлов.</p></article><article class="feature-card"><div class="feature-number">04 / PRIVATE</div><div class="feature-icon green">⛨</div><h3>Локально и прозрачно</h3><p>Моды не исполняются и не отправляются на сервер. Никакого автоматического сохранения коллекции.</p></article></div></section>
+      <section id="privacy" class="privacy-banner"><div class="privacy-symbol">⛨</div><div><div class="panel-kicker">YOUR FILES STAY YOURS</div><h2>Твоя коллекция остаётся у тебя.</h2><p>Мы читаем только выбранные файлы и метаданные архивов, чтобы построить локальный отчёт. Observatory не меняет игровые файлы.</p></div><a href="https://github.com/GhosTnever-lkm/mod-observatory" rel="noreferrer">Открытый исходный код ↗</a></section>
+    </main>
+    <footer class="site-footer"><a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span><strong>Mod Observatory</strong><small>OPEN SOURCE · MIT</small></span></a><span>v<span id="version">0.1.0</span> · Локальный аудит модпаков</span><div><a href="README.md">Документация</a><a href="SUPPORT.md">Форматы и ограничения</a><a href="https://github.com/GhosTnever-lkm/mod-observatory/issues" rel="noreferrer">Обратная связь</a></div></footer>
+  </main></div>
+</body>
+</html>
