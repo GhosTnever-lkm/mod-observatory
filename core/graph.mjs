@@ -252,8 +252,10 @@ export function analyzeCollection(mods) {
     findingsByCode[item.code] = (findingsByCode[item.code] ?? 0) + 1;
     findingsBySeverity[item.severity]++;
   }
-  const pathIndex = Object.create(null);
-  for (const key of [...pathMap.keys()].sort(cmp)) pathIndex[key] = pathMap.get(key);
+  const pathIndex = {};
+  for (const key of [...pathMap.keys()].sort(cmp)) {
+    Object.defineProperty(pathIndex, key, { value: pathMap.get(key), enumerable: true, configurable: true, writable: true });
+  }
   const dependencyGraph = {
     nodes: [...byId.keys()].sort(cmp),
     edges: relationshipEdges.sort((a, b) => cmp(a.kind, b.kind) || cmp(a.from, b.from) || cmp(a.to, b.to)),

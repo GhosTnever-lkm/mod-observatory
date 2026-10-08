@@ -43,6 +43,14 @@ test('finds dependency cycles with a closed path', () => {
   assert.deepEqual(cycle.path, ['a', 'b', 'c', 'a']);
 });
 
+test('reports one representative dependency cycle per disconnected cycle group', () => {
+  const result = analyzeCollection([
+    mod('a', { dependencies: [{ id: 'b' }] }), mod('b', { dependencies: [{ id: 'a' }] }),
+    mod('c', { dependencies: [{ id: 'd' }] }), mod('d', { dependencies: [{ id: 'c' }] }),
+  ]);
+  assert.equal(result.findings.filter((f) => f.code === 'DEPENDENCY_CYCLE').length, 2);
+});
+
 test('iteratively processes deep dependency graph without recursion', () => {
   const mods = Array.from({ length: 12000 }, (_, i) => mod(`m${i}`, { dependencies: i ? [{ id: `m${i - 1}` }] : [] }));
   const result = analyzeCollection(mods);
@@ -85,6 +93,12 @@ test('reports unsafe path and excludes service files', () => {
   ] })]);
   assert.equal(result.findings.filter((f) => f.code === 'UNSAFE_PATH').length, 1);
   assert.deepEqual(Object.keys(result.pathIndex), ['real/data.txt']);
+});
+
+test('keeps a __proto__ file path as ordinary JSON data', () => {
+  const result = analyzeCollection([mod('a', { files: [{ path: '__proto__', size: 1 }] })]);
+  assert.equal(Object.hasOwn(result.pathIndex, '__proto__'), true);
+  assert.deepEqual(JSON.parse(JSON.stringify(result)).pathIndex.__proto__.entries[0].modId, 'a');
 });
 
 test('reports mutual manifest conflict and unilateral declarations distinctly', () => {
