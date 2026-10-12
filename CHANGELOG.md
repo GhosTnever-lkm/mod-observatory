@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.4 — 2026-10-12
+
+- Version the core graph module and stylesheet URLs as well as the app entry point to prevent stale browser assets after deployment.
+- Extend the version checker to verify all runtime asset cache keys.
+- Advance the displayed and package version to 0.2.4.
+
 ## 0.2.3 — 2026-10-12
 
 - Version the app module URL so browsers load the matching script after an update instead of reusing a cached older version.

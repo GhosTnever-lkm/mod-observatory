@@ -8,7 +8,8 @@ const changelog = await readFile(new URL('../CHANGELOG.md', import.meta.url), 'u
 
 const checks = [
   ['package.json', packageJson.version === version],
-  ['index.html module cache key', html.includes(`<script type="module" src="app.js?v=${version}"></script>`)],
+  ['index.html asset cache keys', html.includes(`<link rel="stylesheet" href="styles.css?v=${version}">`) && html.includes(`<script type="module" src="app.js?v=${version}"></script>`)],
+  ['app.js core module cache key', app.includes(`from './core/graph.mjs?v=${version}'`)],
   ['index.html', html.includes(`id="version">${version}</span> · Локальный аудит модпаков`) && html.includes(`ЛОКАЛЬНЫЙ СЕАНС · v${version}`)],
   ['app.js', app.includes(`$('version').textContent = '${version}'`)],
   ['CHANGELOG.md', changelog.includes(`## ${version} —`)],

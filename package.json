@@ -1,6 +1,6 @@
 {
   "name": "mod-observatory",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "type": "module",
   "description": "Local-first mod collection audit, dependency graph, and snapshot comparison",
   "scripts": {
