@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.3 — 2026-10-12
+
+- Version the app module URL so browsers load the matching script after an update instead of reusing a cached older version.
+- Check the versioned module URL alongside the displayed and package versions.
+- Advance the displayed and package version to 0.2.3.
+
 ## 0.2.2 — 2026-10-12
 
 - Exclude Paradox `descriptor.mod` metadata files from shared-path findings and snapshot file diffs.

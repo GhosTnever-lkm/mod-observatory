@@ -284,7 +284,7 @@ function renderGraph() {
 function render() {
   renderCollection(); renderFindings(); renderPaths(); renderGraph();
   $('collection-meta').textContent = state.mods.length ? `${state.analysis.summary.uniquePaths} путей · ${(state.analysis.summary.totalSize / 1024 / 1024).toFixed(1)} МБ` : 'Сеанс не сохранён автоматически';
-  $('version').textContent = '0.2.2';
+  $('version').textContent = '0.2.3';
 }
 
 function downloadJSON(payload, filename) {
