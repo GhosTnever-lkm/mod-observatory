@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 — 2026-10-12
+
+- Split nested Paradox mods in a selected collection folder by their nearest `descriptor.mod` directory instead of treating the whole collection as one mod.
+- Document collection-folder grouping and add regression coverage for nested and single-mod selections.
+- Advance the displayed and package version to 0.2.1.
+
 ## 0.2.0 — 2026-10-08
 
 - Translate the project README and remaining public interface labels into Russian.

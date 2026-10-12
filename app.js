@@ -1,4 +1,4 @@
-import { analyzeCollection, compareCollections, normalizeRelativePath } from './core/graph.mjs';
+import { analyzeCollection, compareCollections, groupFolderEntries, normalizeRelativePath } from './core/graph.mjs';
 
 const $ = (id) => document.getElementById(id);
 const state = { mods: [], analysis: null, previous: null, theme: 'dark' };
@@ -152,34 +152,23 @@ async function readZip(file) {
   return files;
 }
 
-function groupFolderFiles(fileList) {
-  const groups = new Map();
-  for (const file of fileList) {
-    const relative = file.webkitRelativePath || file.name;
-    const normalized = normalizeRelativePath(relative);
-    if (!normalized) continue;
-    const first = normalized.display.split('/')[0];
-    if (!groups.has(first)) groups.set(first, []);
-    groups.get(first).push({ file, path: normalized.display.split('/').slice(1).join('/') || file.name });
-  }
-  return groups;
-}
-
 async function importFolders(fileList) {
   if (fileList.length > 50000) throw new Error('выбрано больше 50 000 файлов');
   const totalSize = [...fileList].reduce((sum, file) => sum + file.size, 0);
   if (totalSize > 512 * 1024 * 1024) throw new Error('суммарный размер выбранных папок превышает лимит 512 МБ');
-  const groups = groupFolderFiles(fileList);
-  for (const [folder, items] of groups) {
-    const id = stableId(folder, state.mods.length);
+  const groups = groupFolderEntries([...fileList].map((file) => ({ file, path: file.webkitRelativePath || file.name })));
+  for (const group of groups) {
+    const { id: folder, name, items } = group;
+    const stable = stableId(folder, state.mods.length);
     const descriptor = items.find((x) => x.path.toLowerCase() === 'descriptor.mod');
-    const metadata = descriptor ? parseDescriptor(await descriptor.file.text(), folder, id) : { id, name: folder, game: 'Не определена', dependencies: [] };
+    const metadata = descriptor ? parseDescriptor(await descriptor.entry.file.text(), name, stable) : { id: stable, name, game: 'Не определена', dependencies: [] };
+    metadata.id = stable;
     const files = [];
-    for (const { file, path } of items) {
+    for (const { entry, path } of items) {
       if (!path) continue;
-      files.push({ path, size: file.size, hash: await sha256(await file.arrayBuffer()) });
+      files.push({ path, size: entry.file.size, hash: await sha256(await entry.file.arrayBuffer()) });
     }
-    state.mods.push({ ...metadata, id, enabled: true, order: state.mods.length, files, loadAfter: [], conflictsWith: [] });
+    state.mods.push({ ...metadata, id: stable, enabled: true, order: state.mods.length, files, loadAfter: [], conflictsWith: [] });
   }
 }
 
@@ -295,7 +284,7 @@ function renderGraph() {
 function render() {
   renderCollection(); renderFindings(); renderPaths(); renderGraph();
   $('collection-meta').textContent = state.mods.length ? `${state.analysis.summary.uniquePaths} путей · ${(state.analysis.summary.totalSize / 1024 / 1024).toFixed(1)} МБ` : 'Сеанс не сохранён автоматически';
-  $('version').textContent = '0.2.0';
+  $('version').textContent = '0.2.1';
 }
 
 function downloadJSON(payload, filename) {

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { analyzeCollection, compareCollections, normalizeRelativePath } from '../core/graph.mjs';
+import { analyzeCollection, compareCollections, groupFolderEntries, normalizeRelativePath } from '../core/graph.mjs';
 
 const codes = (mods) => analyzeCollection(mods).findings.map((item) => item.code);
 const mod = (id, extra = {}) => ({ id, name: id, game: 'test-game', files: [], dependencies: [], ...extra });
@@ -13,6 +13,29 @@ test('rejects traversal, absolute, drive-relative, URL, and empty paths', () => 
   for (const path of ['../x', 'a/../x', '/root/x', 'C:\\x', 'C:relative', 'https://host/x', '', './']) {
     assert.equal(normalizeRelativePath(path), null, path);
   }
+});
+
+test('groups a selected collection by nested Paradox descriptor roots', () => {
+  const groups = groupFolderEntries([
+    { path: 'Collection/ModA/descriptor.mod', marker: 'a-descriptor' },
+    { path: 'Collection/ModA/common/ideas/a.txt', marker: 'a-file' },
+    { path: 'Collection/ModB/descriptor.mod', marker: 'b-descriptor' },
+    { path: 'Collection/ModB/common/ideas/b.txt', marker: 'b-file' },
+  ]);
+  assert.deepEqual(groups.map((group) => group.name), ['ModA', 'ModB']);
+  assert.deepEqual(groups[0].items.map((item) => item.path), ['descriptor.mod', 'common/ideas/a.txt']);
+  assert.deepEqual(groups[1].items.map((item) => item.path), ['descriptor.mod', 'common/ideas/b.txt']);
+  assert.equal(groups[0].items[1].entry.marker, 'a-file');
+});
+
+test('keeps a single selected mod folder grouped at its selected root', () => {
+  const groups = groupFolderEntries([
+    { path: 'ChosenMod/common/ideas/a.txt' },
+    { path: 'ChosenMod/descriptor.mod' },
+  ]);
+  assert.equal(groups.length, 1);
+  assert.equal(groups[0].name, 'ChosenMod');
+  assert.deepEqual(groups[0].items.map((item) => item.path), ['common/ideas/a.txt', 'descriptor.mod']);
 });
 
 test('reports duplicate IDs once and counts extra records', () => {

@@ -4,7 +4,7 @@
 
 | Input | Read in this release | Not inferred |
 | --- | --- | --- |
-| Selected folder | Relative paths, byte sizes, SHA-256 when available, Paradox `descriptor.mod` name and dependency names | Game-specific override behavior; dependencies from unknown manifest formats |
+| Selected folder | Relative paths, byte sizes, SHA-256 when available, Paradox `descriptor.mod` name and dependency names; nested mods are split by descriptor directory | Game-specific override behavior; dependencies from unknown manifest formats; without nested descriptors, files are grouped under the selected top-level folder |
 | ZIP archive | Stored and deflate entries, central-directory paths, sizes, CRC validation, supported descriptor text | ZIP64, encryption, unsupported compression methods, malformed entries; archives are not extracted to disk |
 | Snapshot JSON | Mod IDs, names, games, enabled state, order, dependencies, file metadata, and reported hashes | Missing hashes cannot be recreated; imported JSON is treated as user-provided data |
 
@@ -19,4 +19,4 @@
 - Version strings and dependency ranges vary by game. This release does not interpret their syntax.
 - Dependency cycles are reported once per strongly connected group, not as every possible simple cycle.
 - The tool is not an antivirus scanner or a guarantee that an archive is safe.
-- Folder import groups by the top-level directory selected in the browser. Unusual package nesting may require importing a ZIP instead.
+- Folder import recognizes nested Paradox mods from `descriptor.mod` and assigns files to the closest descriptor directory. If no nested descriptor exists, it groups by the selected top-level directory. Unusual package nesting may require importing ZIPs separately.

@@ -33,6 +33,32 @@ export function normalizeRelativePath(input) {
   return { key: display.toLocaleLowerCase('en-US'), display };
 }
 
+export function groupFolderEntries(entries) {
+  const normalizedEntries = (Array.isArray(entries) ? entries : []).flatMap((entry) => {
+    if (!entry || typeof entry.path !== 'string') return [];
+    const normalized = normalizeRelativePath(entry.path);
+    if (!normalized) return [];
+    return [{ entry, parts: normalized.display.split('/') }];
+  });
+  const descriptorRoots = [...new Map(normalizedEntries
+    .filter(({ parts }) => parts.length > 1 && parts.at(-1).toLowerCase() === 'descriptor.mod')
+    .map(({ parts }) => {
+      const root = parts.slice(0, -1);
+      return [root.join('/').toLocaleLowerCase('en-US'), root];
+    })).values()].sort((a, b) => b.length - a.length || cmp(a.join('/'), b.join('/')));
+  const groups = new Map();
+  for (const { entry, parts } of normalizedEntries) {
+    const root = descriptorRoots.find((candidate) => candidate.length < parts.length
+      && candidate.every((part, index) => part.toLocaleLowerCase('en-US') === parts[index].toLocaleLowerCase('en-US')));
+    const groupParts = root ?? [parts[0]];
+    const groupId = groupParts.join('/');
+    if (!groups.has(groupId)) groups.set(groupId, { id: groupId, name: groupParts.at(-1), items: [] });
+    const relativeParts = parts.slice(groupParts.length);
+    groups.get(groupId).items.push({ entry, path: relativeParts.join('/') || parts.at(-1) });
+  }
+  return [...groups.values()];
+}
+
 function findCycles(adjacency) {
   const reverse = new Map([...adjacency.keys()].map((id) => [id, []]));
   for (const [from, targets] of adjacency) for (const to of targets) reverse.get(to)?.push(from);
