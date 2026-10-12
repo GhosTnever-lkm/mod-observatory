@@ -112,7 +112,7 @@ test('shared path is only a warning even when hashes differ', () => {
 
 test('reports unsafe path and excludes service files', () => {
   const result = analyzeCollection([mod('a', { files: [
-    { path: '../evil' }, { path: 'README.md' }, { path: 'sub/LICENSE.txt' }, { path: '.git/config' }, { path: 'thumbnail.png' }, { path: 'real/data.txt' },
+    { path: '../evil' }, { path: 'README.md' }, { path: 'sub/LICENSE.txt' }, { path: 'descriptor.mod' }, { path: 'sub/descriptor.mod' }, { path: '.git/config' }, { path: 'thumbnail.png' }, { path: 'real/data.txt' },
   ] })]);
   assert.equal(result.findings.filter((f) => f.code === 'UNSAFE_PATH').length, 1);
   assert.deepEqual(Object.keys(result.pathIndex), ['real/data.txt']);

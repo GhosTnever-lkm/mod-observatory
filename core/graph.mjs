@@ -1,4 +1,4 @@
-const SERVICE_FILE = /^(?:readme|license|licence|copying|changelog|thumbnail|desktop\.ini|\.ds_store|\.gitignore|\.gitattributes)(?:\.[a-z0-9_-]+)?$/i;
+const SERVICE_FILE = /^(?:descriptor\.mod|readme|license|licence|copying|changelog|thumbnail|desktop\.ini|\.ds_store|\.gitignore|\.gitattributes)(?:\.[a-z0-9_-]+)?$/i;
 
 function cmp(a, b) {
   return a < b ? -1 : a > b ? 1 : 0;

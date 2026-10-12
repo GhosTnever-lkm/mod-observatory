@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2 — 2026-10-12
+
+- Exclude Paradox `descriptor.mod` metadata files from shared-path findings and snapshot file diffs.
+- Add regression coverage for descriptors at mod root and nested paths.
+- Advance the displayed and package version to 0.2.2.
+
 ## 0.2.1 — 2026-10-12
 
 - Split nested Paradox mods in a selected collection folder by their nearest `descriptor.mod` directory instead of treating the whole collection as one mod.

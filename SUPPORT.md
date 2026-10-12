@@ -4,7 +4,7 @@
 
 | Input | Read in this release | Not inferred |
 | --- | --- | --- |
-| Selected folder | Relative paths, byte sizes, SHA-256 when available, Paradox `descriptor.mod` name and dependency names; nested mods are split by descriptor directory | Game-specific override behavior; dependencies from unknown manifest formats; without nested descriptors, files are grouped under the selected top-level folder |
+| Selected folder | Game-file relative paths, byte sizes, SHA-256 when available; Paradox `descriptor.mod` supplies metadata but is not indexed as a game file; nested mods are split by descriptor directory | Game-specific override behavior; dependencies from unknown manifest formats; without nested descriptors, files are grouped under the selected top-level folder |
 | ZIP archive | Stored and deflate entries, central-directory paths, sizes, CRC validation, supported descriptor text | ZIP64, encryption, unsupported compression methods, malformed entries; archives are not extracted to disk |
 | Snapshot JSON | Mod IDs, names, games, enabled state, order, dependencies, file metadata, and reported hashes | Missing hashes cannot be recreated; imported JSON is treated as user-provided data |
 
