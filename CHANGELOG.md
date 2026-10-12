@@ -3,6 +3,7 @@
 ## 0.2.4 — 2026-10-12
 
 - Version the core graph module and stylesheet URLs as well as the app entry point to prevent stale browser assets after deployment.
+- Permit same-origin module fetches in the CSP so versioned browser assets can load.
 - Extend the version checker to verify all runtime asset cache keys.
 - Advance the displayed and package version to 0.2.4.
 
