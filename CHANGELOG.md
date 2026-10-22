@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.5 — 2026-10-23
+
+- Validate imported snapshot records before replacing session state and reject malformed mod, file, and dependency entries.
+- Add regressions for supported exports and malformed snapshot shapes.
+- Advance the package and browser asset versions to 0.2.5.
+
+
 ## 0.2.4 — 2026-10-12
 
 - Version the core graph module and stylesheet URLs as well as the app entry point to prevent stale browser assets after deployment.
