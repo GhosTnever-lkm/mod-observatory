@@ -1,4 +1,4 @@
-import { analyzeCollection, compareCollections, groupFolderEntries, normalizeRelativePath } from './core/graph.mjs?v=0.2.4';
+import { analyzeCollection, compareCollections, groupFolderEntries, normalizeRelativePath, validateSnapshotMods } from './core/graph.mjs?v=0.2.4';
 
 const $ = (id) => document.getElementById(id);
 const state = { mods: [], analysis: null, previous: null, theme: 'dark' };
@@ -325,9 +325,7 @@ function importSnapshot(file) {
   reader.onload = () => {
     try {
       const value = JSON.parse(reader.result);
-      const mods = Array.isArray(value) ? value : value.mods;
-      if (!Array.isArray(mods)) throw new Error('в JSON не найден массив модов');
-      if (mods.length > 50000) throw new Error('в снимке больше 50 000 модов');
+      const mods = validateSnapshotMods(Array.isArray(value) ? value : value?.mods);
       state.previous = mods;
       if (state.mods.length === 0) state.mods = structuredClone(mods);
       updateAnalysis();
