@@ -1,4 +1,4 @@
-import { analyzeCollection, compareCollections, groupFolderEntries, normalizeRelativePath, validateSnapshotMods } from './core/graph.mjs?v=0.2.4';
+import { analyzeCollection, compareCollections, groupFolderEntries, normalizeRelativePath, validateSnapshotMods } from './core/graph.mjs?v=0.2.5';
 
 const $ = (id) => document.getElementById(id);
 const state = { mods: [], analysis: null, previous: null, theme: 'dark' };
@@ -284,7 +284,7 @@ function renderGraph() {
 function render() {
   renderCollection(); renderFindings(); renderPaths(); renderGraph();
   $('collection-meta').textContent = state.mods.length ? `${state.analysis.summary.uniquePaths} путей · ${(state.analysis.summary.totalSize / 1024 / 1024).toFixed(1)} МБ` : 'Сеанс не сохранён автоматически';
-  $('version').textContent = '0.2.4';
+  $('version').textContent = '0.2.5';
 }
 
 function downloadJSON(payload, filename) {
