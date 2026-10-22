@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { analyzeCollection, compareCollections, groupFolderEntries, normalizeRelativePath } from '../core/graph.mjs';
+import { analyzeCollection, compareCollections, groupFolderEntries, normalizeRelativePath, validateSnapshotMods } from '../core/graph.mjs';
 
 const codes = (mods) => analyzeCollection(mods).findings.map((item) => item.code);
 const mod = (id, extra = {}) => ({ id, name: id, game: 'test-game', files: [], dependencies: [], ...extra });
@@ -148,6 +148,18 @@ test('cautiously matches renamed IDs by unique game and name', () => {
   assert.deepEqual(result.removed, []);
   assert.equal(result.updated[0].matchedBy, 'game+name');
   assert.equal(result.updated[0].previousId, 'old');
+});
+
+test('accepts exported snapshot records and rejects malformed records before import', () => {
+  const valid = [mod('a', { files: [{ path: 'common/a.txt', size: 1, hash: 'abc' }], dependencies: [{ id: 'b' }] })];
+  assert.equal(validateSnapshotMods(valid), valid);
+  for (const snapshot of [
+    [{ id: 'a', name: 'A', game: 'test-game' }],
+    [null],
+    [mod('a', { files: [null] })],
+    [mod('a', { dependencies: [null] })],
+  ]) assert.throws(() => validateSnapshotMods(snapshot), /Snapshot mod/);
+  assert.throws(() => validateSnapshotMods({}), /mods array/);
 });
 
 test('ambiguous game/name matches remain added and removed', () => {

@@ -33,6 +33,27 @@ export function normalizeRelativePath(input) {
   return { key: display.toLocaleLowerCase('en-US'), display };
 }
 
+export function validateSnapshotMods(mods) {
+  if (!Array.isArray(mods)) throw new Error('Snapshot must contain a mods array.');
+  if (mods.length > 50000) throw new Error('Snapshot contains more than 50,000 mods.');
+  for (const [index, mod] of mods.entries()) {
+    const label = `Snapshot mod ${index + 1}`;
+    if (!mod || typeof mod !== 'object' || Array.isArray(mod)) throw new Error(`${label} must be an object.`);
+    if (typeof mod.id !== 'string' || !mod.id.trim()) throw new Error(`${label} needs a non-empty string id.`);
+    if (typeof mod.name !== 'string' || typeof mod.game !== 'string') throw new Error(`${label} needs string name and game fields.`);
+    if (!Array.isArray(mod.files)) throw new Error(`${label} needs a files array.`);
+    if (mod.files.some((file) => !file || typeof file !== 'object' || Array.isArray(file) || typeof file.path !== 'string')) {
+      throw new Error(`${label} contains a file without a string path.`);
+    }
+    if (mod.dependencies !== undefined && (!Array.isArray(mod.dependencies)
+      || mod.dependencies.some((dep) => !dep || typeof dep !== 'object' || Array.isArray(dep)
+        || (typeof dep.id !== 'string' && typeof dep.name !== 'string')))) {
+      throw new Error(`${label} contains an invalid dependency.`);
+    }
+  }
+  return mods;
+}
+
 export function groupFolderEntries(entries) {
   const normalizedEntries = (Array.isArray(entries) ? entries : []).flatMap((entry) => {
     if (!entry || typeof entry.path !== 'string') return [];
